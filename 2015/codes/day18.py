@@ -18,12 +18,22 @@ def update_grid(grid):
 
     for i in range(len(grid)):
         for j in range(len(grid[0])):
+            if (i == 0 or i == len(grid) - 1) and (j == 0 or j == len(grid[0]) - 1):
+                # Skip the corner cells
+                continue
+
             neighbors = count_neighbors(grid, i, j)
 
             if grid[i][j] == '#' and neighbors not in (2, 3):
                 new_grid[i][j] = '.'
             elif grid[i][j] == '.' and neighbors == 3:
                 new_grid[i][j] = '#'
+
+    # Set the four corners to always be on
+    new_grid[0][0] = '#'
+    new_grid[0][-1] = '#'
+    new_grid[-1][0] = '#'
+    new_grid[-1][-1] = '#'
 
     return new_grid
 
@@ -35,5 +45,17 @@ def animate_lights(initial_grid, steps):
 
     return sum(row.count('#') for row in current_grid)
 
-result = animate_lights(data, 100)
-print("Lights on after 100 steps:", result)
+corners = { (0,0), (0,99), (99,0), (99,99) }
+with open('../inputs/day18') as f:
+    lights = corners | {(x,y) for y, line in enumerate(f)
+                        for x, char in enumerate(line.strip())
+                        if char == '#'}
+
+neighbours = lambda x,y: sum((_x,_y) in lights for _x in (x-1,x,x+1)
+                            for _y in (y-1,y,y+1) if (_x, _y) != (x, y))
+
+for c in range(100):
+    lights = corners | {(x,y) for x in range(100) for y in range(100)
+                        if (x,y) in lights and 2 <= neighbours(x,y) <= 3
+                        or (x,y) not in lights and neighbours(x,y) == 3}
+print (len(lights))

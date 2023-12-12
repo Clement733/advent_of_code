@@ -4,9 +4,6 @@ lines = [e.strip().split() for e in lines]
 print(lines)
 
 def getcount(memo, line, counts, pos, current_count, countpos):
-      # pos is the next character to be processed
-      # current_count is how far into the current sequence of #s we are in
-      # countpos is how many sequences of #s we have already finished
       key = (pos, current_count, countpos)
       if key in memo:
             return memo[key]
@@ -30,17 +27,17 @@ def getcount(memo, line, counts, pos, current_count, countpos):
                   dot_count = getcount(memo, line, counts, pos + 1, 0, countpos)
             ret = hash_count + dot_count
       memo[key] = ret
-      # print(key, ret)
+      print(memo)
       return ret
 
-res = 0
+s1 = 0
 for row in lines:
       counts = [int(x) for x in row[1].split(',')]
-      res += getcount({}, row[0] + '.', counts, 0, 0, 0)
-print(res)
+      s1 += getcount({}, row[0] + '.', counts, 0, 0, 0)
+print(s1)
 
-res = 0
+s2 = 0
 for row in lines:
       counts = [int(x) for x in row[1].split(',')] * 5
-      res += getcount({}, (row[0] + '?') * 4 + row[0] + '.', counts, 0, 0, 0)
-print(res)
+      s2 += getcount({}, (row[0] + '?') * 4 + row[0] + '.', counts, 0, 0, 0)
+print(s2)
